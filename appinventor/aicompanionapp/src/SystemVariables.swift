@@ -20,4 +20,43 @@ class SystemVariables {
       UserDefaults.standard.set(value, forKey: "isNewUser")
     }
   }
+  
+  private static var libraryDict: [UUID: AppInfo] = loadLibrary() ?? [:]
+  
+  static var library: [UUID: AppInfo] {
+    return libraryDict
+  }
+  
+  private static func loadLibrary() -> [UUID:AppInfo]? {
+    if let savedData = UserDefaults.standard.data(forKey: "savedLibrary"), let decodedData = try? JSONDecoder().decode([UUID:AppInfo].self, from: savedData) {
+      return decodedData
+    }
+    return nil
+  }
+  
+  private static func saveLibrary() -> Bool{
+    do {
+      let encodedData = try JSONEncoder().encode(libraryDict)
+      UserDefaults.standard.set(encodedData, forKey: "savedLibrary")
+      return true
+    } catch {
+      return false
+    }
+  }
+  
+  static func getLibrary() -> [UUID:AppInfo]? {
+    return libraryDict
+  }
+  
+  static func addApp(appInfo: AppInfo) -> Bool {
+    let appId = UUID()
+    libraryDict[appId] = appInfo
+    return saveLibrary()
+  }
+  
+  static func removeApp(appId: UUID) -> Bool {
+    libraryDict.removeValue(forKey: appId)
+    return saveLibrary()
+  }
+  
 }

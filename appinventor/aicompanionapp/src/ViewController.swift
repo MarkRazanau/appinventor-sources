@@ -59,6 +59,7 @@ public class ViewController: UINavigationController, UITextFieldDelegate {
   @IBOutlet weak var connectCode: UITextField?
   @IBOutlet weak var connectButton: UIButton?
   @IBOutlet weak var barcodeButton: UIButton?
+  @IBOutlet weak var libraryButton: UIButton?
   @IBOutlet weak var legacyCheckbox: CheckBoxView!
   @objc var barcodeScanner: BarcodeScanner?
   @objc var phoneStatus: PhoneStatus!
@@ -168,6 +169,7 @@ public class ViewController: UINavigationController, UITextFieldDelegate {
       connectButton = form.view.viewWithTag(4) as! UIButton?
       barcodeButton = form.view.viewWithTag(5) as! UIButton?
       legacyCheckbox = form.view.viewWithTag(6) as? CheckBoxView
+      libraryButton = form.view.viewWithTag(7) as! UIButton?
       legacyCheckbox.Text = "Use Legacy Connection"
       let ipaddr: String! = NetworkUtils.getIPAddress()
       let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] ?? "unknown"
@@ -177,6 +179,7 @@ public class ViewController: UINavigationController, UITextFieldDelegate {
       connectCode?.delegate = self
       connectButton?.addTarget(self, action: #selector(connect(_:)), for: UIControl.Event.primaryActionTriggered)
       barcodeButton?.addTarget(self, action: #selector(showBarcodeScanner(_:)), for: UIControl.Event.primaryActionTriggered)
+      libraryButton?.addTarget(self, action: #selector(openLibrary), for: .touchUpInside)
       navigationBar.barTintColor = argbToColor(form.PrimaryColor)
       navigationBar.isTranslucent = false
       form.updateNavbar()
@@ -283,6 +286,11 @@ public class ViewController: UINavigationController, UITextFieldDelegate {
     if let exception = form.interpreter.exception {
       NSLog("Exception: \(exception.name) (\(exception))")
     }
+  }
+  
+  @objc func openLibrary(){
+    let libraryVC = storyboard?.instantiateViewController(withIdentifier: "library") as! AppLibraryViewController
+    self.pushViewController(libraryVC, animated:true)
   }
   
   @objc public class func gotText(_ text: String) {
